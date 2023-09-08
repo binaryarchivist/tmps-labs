@@ -1,5 +1,6 @@
 # Topic: *SOLID Principles*
 ## Author: *Nastas Corneliu*
+
 ------
 ## Objectives:
 &ensp; &ensp; __1. Study and understand the SOLID Principles.__
@@ -20,25 +21,15 @@
 
 &ensp; &ensp; __4. Respect SOLID Principles in your project.__
 
-## Evaluation:
-&ensp; &ensp; __1. The project should be located in a repository on a git hosting service (e.g. Github, Gitlab, BitBucket etc.):__
+## Implementation:
+### SOLID Principles:
+&ensp; &ensp; __1. Single Responsibility Principle:__ Each class has a single responsibility. For example PaymentService only deals with payment-related logic.
 
-* You only need to have one project
-* You can have separate modules that depend on each other
-* You should separate the project into modules / packages based on the responsibilities:
-    * client
-    * domain
-        * factory
-        * models
+&ensp; &ensp; __2. Open/Closed Principle:.__ 
 
-&ensp; &ensp; __2. It should contain an explanation in the form of a README file or a LaTeX report with the standard structure from the TEMPLATE.md file.__
+&ensp; &ensp; __3. Liskov Substitution Principle:__ For example all Repository classes have their own interfaces, so basically any subclass of given interface should be able to replace that class.
 
-&ensp; &ensp; __3. The mark of the lab is based on the number of SOLID principles you respected.__
+&ensp; &ensp; __4. Interface Segregation Principle:__ Each service and repository have their own interfaces ensuring they don't have to implement methods they aren't going to use.
 
-&ensp; &ensp; __4. Submit the repository URL on ELSE.__
+&ensp; &ensp; __5. Dependency Inversion Principle:__ High-level modules (like services) depend on abstractions (like interfaces), not on low-level modules (like repositories).
 
-&ensp; &ensp; __5. The time limit for this assignment is 1-2 week.__
-
-&ensp; &ensp; __6. After the deadline for each weak the max grade decreases by 1.__
-
-&ensp; &ensp; __7. The laboratory works can be defended either online or at the university during the seminar.__
