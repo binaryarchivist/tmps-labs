@@ -23,7 +23,7 @@
 
 ## Implementation:
 ### SOLID Principles:
-&ensp; &ensp; __1. Single Responsibility Principle:__ Each class has a single responsibility. For example PaymentService only deals with payment-related logic.
+&ensp; &ensp; __1. Single Responsibility Principle:__ Each class has a single responsibility. For example OrderService only deals with order-related logic.
 
 &ensp; &ensp; __2. Open/Closed Principle:.__ 
 
