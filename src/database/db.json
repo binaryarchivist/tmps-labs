@@ -1,0 +1,12 @@
+{
+	"products": [
+		{
+			"name": "Tes2ft",
+			"price": 123
+		},
+		{
+			"name": "Tes2fat",
+			"price": 123
+		}
+	]
+}

@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var ProductRepository_1 = require("./repositories/ProductRepository");
+var ProductService_1 = require("./services/ProductService");
+var ProductController_1 = require("./controllers/ProductController");
+var Product_1 = require("./models/Product");
+var productRepository = new ProductRepository_1.ProductRepository();
+var productService = new ProductService_1.ProductService(productRepository);
+var productController = new ProductController_1.ProductController(productService);
+var prod = productController.save(new Product_1.Product('Tes2fat', 123));
+console.log(productController.findByName('Test'));

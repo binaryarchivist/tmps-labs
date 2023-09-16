@@ -1,11 +1,12 @@
 {
   "name": "tmps-labs",
+  "type": "commonjs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "start": "tsc src/index.ts && node src/index.js"
   },
   "keywords": [],
   "author": "",
