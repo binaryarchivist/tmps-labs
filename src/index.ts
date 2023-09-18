@@ -7,5 +7,5 @@ const productRepository: ProductRepository = new ProductRepository();
 const productService: ProductService = new ProductService(productRepository);
 const productController: ProductController = new ProductController(productService);
 
-const prod: Product = productController.save(new Product('Tes2fat', 123));
-console.log(productController.findByName('Test'));
+// const prod: Product = productController.save(new Product('Tes2fat', 123));
+console.log(productController.findByName('Tes2fat'));

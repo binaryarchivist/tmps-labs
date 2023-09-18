@@ -25,11 +25,88 @@
 ### SOLID Principles:
 &ensp; &ensp; __1. Single Responsibility Principle:__ Each class has a single responsibility. For example OrderService only deals with order-related logic.
 
+#### Implementation
+
+```typescript
+export class ProductService implements IProductService {
+  constructor(private readonly productRepository: IProductRepository) {
+  }
+
+  save(product: Readonly<Product>): Product {
+    const isValid: boolean = this.validate(product);
+    if (!isValid) {
+      throw new Error('Product already exists');
+    }
+
+    return this.productRepository.save(product);
+  }
+
+  findByName(name: string): Product | undefined {
+    return this.productRepository.findByName(name);
+  }
+
+  validate(product: Readonly<Product>): boolean {
+    const { name } = product;
+    const productAlreadyExists = this.findByName(name);
+
+    return !productAlreadyExists;
+  }
+}
+```
+
+In the ProductService class we will find all the logic related of the Products
+
+
 &ensp; &ensp; __2. Open/Closed Principle:.__ 
+
+Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
+The best example where we can show the OCP principle is when classes will depend on specific interfaces instead of something more concrete.
+
+In my example I have a IRepository interface which later was extended to accommodate the IProductRepository.
+```typescript
+export interface IRepository<T> {
+  findAll(): T[];
+
+  save(record: T): T;
+}
+```
+
+```typescript
+export interface IProductRepository extends IRepository<Product> {
+  findByName(name: string): Product | undefined;
+}
+
+```
+#### Implementation
 
 &ensp; &ensp; __3. Liskov Substitution Principle:__ For example all Repository classes have their own interfaces, so basically any subclass of given interface should be able to replace that class.
 
+```typescript
+export interface IRepository<T> {
+  findAll(): T[];
+
+  save(record: T): T;
+}
+
+
+export interface IProductRepository extends IRepository<Product> {
+  findByName(name: string): Product | undefined;
+}
+
+export class ProductRepository implements IProductRepository {...}
+
+export class ProductService implements IProductService {
+  constructor(private readonly productRepository: IProductRepository) {
+  }
+}
+
+const productRepository: ProductRepository = new ProductRepository();
+const productService: ProductService = new ProductService(productRepository);
+const productController: ProductController = new ProductController(productService);
+
+console.log(productController.findByName('Tes2fat')); // { name: 'Tes2fat', price: 123 }
+
+
+```
 &ensp; &ensp; __4. Interface Segregation Principle:__ Each service and repository have their own interfaces ensuring they don't have to implement methods they aren't going to use.
-
 &ensp; &ensp; __5. Dependency Inversion Principle:__ High-level modules (like services) depend on abstractions (like interfaces), not on low-level modules (like repositories).
-
