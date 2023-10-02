@@ -1,16 +1,22 @@
-# Topic: *SOLID Principles*
+# Topic: *Creational Design Patterns*
 ## Author: *Nastas Corneliu*
-
 ------
 ## Objectives:
-&ensp; &ensp; __1. Study and understand the SOLID Principles.__
+&ensp; &ensp; __1. Study and understand the Creational Design Patterns.__
 
 &ensp; &ensp; __2. Choose a domain, define its main classes/models/entities and choose the appropriate instantiation mechanisms.__
 
-&ensp; &ensp;__3. Create a sample project that respects SOLID Principles.__
+&ensp; &ensp; __3. Use some creational design patterns for object instantiation in a sample project.__
 
-## Theory:
-&ensp; &ensp; SOLID is a set of five object-oriented design principles intended to make software designs more maintainable, flexible, and easy to understand. The acronym stands for Single Responsibility Principle, Open-Closed Principle, Liskov Substitution Principle, Interface Segregation Principle, and Dependency Inversion Principle. Each principle addresses a specific aspect of software design, such as the organization of responsibilities, the handling of dependencies, and the design of interfaces. By following these principles, software developers can create more modular, testable, and reusable code that is easier to modify and extend over time. These principles are widely accepted and adopted in the software development community and can be applied to any object-oriented programming language.
+## Some Theory:
+&ensp; &ensp; Creational design patterns are a category of design patterns that focus on the process of object creation. They provide a way to create objects in a flexible and controlled manner, while decoupling the client code from the specifics of object creation. Creational design patterns address common problems encountered in object creation, such as how to create objects with different initialization parameters, how to create objects based on certain conditions, or how to ensure that only a single instance of an object is created. There are several creational design patterns that have their own strengths and weaknesses. Each of it is best suited for solving specific problems related to object creation. By using creational design patterns, developers can improve the flexibility, maintainability, and scalability of their code.
+
+&ensp; &ensp; Some examples of this kind of design patterns are:
+
+* Singleton
+* Builder
+* Prototype
+* Factory Method
 
 ## Main tasks:
 &ensp; &ensp; __1. Choose an OO programming language and a suitable IDE or Editor (No frameworks/libs/engines allowed).__
@@ -19,94 +25,30 @@
 
 &ensp; &ensp; __3. Define the main involved classes and think about what instantiation mechanisms are needed.__
 
-&ensp; &ensp; __4. Respect SOLID Principles in your project.__
+&ensp; &ensp; __4. Based on the previous point, implement at least 2 creational design patterns in your project.__
 
 ## Implementation:
-### SOLID Principles:
-&ensp; &ensp; __1. Single Responsibility Principle:__ Each class has a single responsibility. For example OrderService only deals with order-related logic.
 
-#### Implementation
+### Singleton 
+* Restricts the instantiation of a class and ensures that only one instance of the class exists. In my case I chose to implement a `Logger` class that logs various information. We define logger as propriety and get its instance if there is any and use it to log information.
 
-```typescript
-export class ProductService implements IProductService {
-  constructor(private readonly productRepository: IProductRepository) {
-  }
+### Prototype
+* The Prototype Pattern is a creational design pattern that allows an object to copy itself. By returning a new instance with same proprieties we essentially "clone" the current instance.
 
-  save(product: Readonly<Product>): Product {
-    const isValid: boolean = this.validate(product);
-    if (!isValid) {
-      throw new Error('Product already exists');
-    }
+### Factory
+* The Factory Pattern takes care of object creation and delivers the newly constructed instances ready for use, abstracting the object creation complexities from the consumer.
+  * I've implemented the Factory class following these steps:
+    * Implementing a `IClass` interface which will be the glue between all the classes in Factory.
+    * Implement concrete classes under `IClass` interface: `Warrior` and `Wizard`
+    * Finally define the Factory class that returns a specific class based on type passed to it.
 
-    return this.productRepository.save(product);
-  }
-
-  findByName(name: string): Product | undefined {
-    return this.productRepository.findByName(name);
-  }
-
-  validate(product: Readonly<Product>): boolean {
-    const { name } = product;
-    const productAlreadyExists = this.findByName(name);
-
-    return !productAlreadyExists;
-  }
-}
-```
-
-In the ProductService class we will find all the logic related of the Products
+### Builder
+* The Builder Pattern is a creational design pattern that lets us construct complex objects step by step. It's a great way to avoid constructor "pollution" and re-instantiating everything.
+  * It was implemented by first creating a `GameCharacter` class with different proprieties
+  * We need an interface for the Builder and that's where `ICharacterBuilder` comes into play, basically define methods for assigning character props.
+  * Last but not least part: the `GameCharacterBuilder` which implements the above interface.
 
 
-&ensp; &ensp; __2. Open/Closed Principle:.__ 
+## Conclusion
 
-Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
-The best example where we can show the OCP principle is when classes will depend on specific interfaces instead of something more concrete.
-
-In my example I have a IRepository interface which later was extended to accommodate the IProductRepository.
-```typescript
-export interface IRepository<T> {
-  findAll(): T[];
-
-  save(record: T): T;
-}
-```
-
-```typescript
-export interface IProductRepository extends IRepository<Product> {
-  findByName(name: string): Product | undefined;
-}
-
-```
-#### Implementation
-
-&ensp; &ensp; __3. Liskov Substitution Principle:__ For example all Repository classes have their own interfaces, so basically any subclass of given interface should be able to replace that class.
-
-```typescript
-export interface IRepository<T> {
-  findAll(): T[];
-
-  save(record: T): T;
-}
-
-
-export interface IProductRepository extends IRepository<Product> {
-  findByName(name: string): Product | undefined;
-}
-
-export class ProductRepository implements IProductRepository {...}
-
-export class ProductService implements IProductService {
-  constructor(private readonly productRepository: IProductRepository) {
-  }
-}
-
-const productRepository: ProductRepository = new ProductRepository();
-const productService: ProductService = new ProductService(productRepository);
-const productController: ProductController = new ProductController(productService);
-
-console.log(productController.findByName('Tes2fat')); // { name: 'Tes2fat', price: 123 }
-
-
-```
-&ensp; &ensp; __4. Interface Segregation Principle:__ Each service and repository have their own interfaces ensuring they don't have to implement methods they aren't going to use.
-&ensp; &ensp; __5. Dependency Inversion Principle:__ High-level modules (like services) depend on abstractions (like interfaces), not on low-level modules (like repositories).
+During this laboratory work I've had some fun building interesting classes that might be actual real world examples and got to study about these design patterns in great detail.

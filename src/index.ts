@@ -1,11 +1,30 @@
-import { ProductRepository } from './repositories/ProductRepository';
-import { ProductService } from './services/ProductService';
-import { ProductController } from './controllers/ProductController';
-import { Product } from './models/Product';
+import { GameObject } from './prototype';
 
-const productRepository: ProductRepository = new ProductRepository();
-const productService: ProductService = new ProductService(productRepository);
-const productController: ProductController = new ProductController(productService);
+import { GameCharacterBuilder, GameCharacter } from './builder';
 
-// const prod: Product = productController.save(new Product('Tes2fat', 123));
-console.log(productController.findByName('Tes2fat'));
+import { ClassFactory, IClass } from './factory';
+
+const spinner: GameObject = new GameObject('Spinner !', [0, 0]);
+spinner.describe();
+
+const anotherSpinner: GameObject = spinner.clone();
+anotherSpinner.describe();
+
+const classFactory: ClassFactory = new ClassFactory();
+const warrior: IClass = classFactory.createCharacter('Warrior');
+
+const gameCharBuilder: GameCharacterBuilder = new GameCharacterBuilder('Cornel', warrior);
+const gameChar: GameCharacter = gameCharBuilder.build();
+gameChar.describe();
+
+gameCharBuilder.setWeapon('Atiesh, Greatstaff of the Guardian');
+gameChar.describe();
+
+gameCharBuilder.setArmor('the Frostfire Regalia');
+gameChar.describe();
+gameChar.attack();
+
+const wizard: IClass = classFactory.createCharacter('Wizard');
+gameCharBuilder.setClass(wizard);
+gameChar.describe();
+gameChar.attack();
