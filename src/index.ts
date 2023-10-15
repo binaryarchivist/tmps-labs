@@ -1,33 +1,53 @@
-import { GameObject } from './prototype';
+import { ErrorAdapter, ThirdPartyError } from './error/ErrorAdapter';
+import { INotifier } from './notifier/notifier.interface';
+import Notifier from './notifier/Notifier';
+import { SlackNotifier } from './notifier/slack-notifier';
+import { EmailNotifier } from './notifier/email-notifier';
+import { EmailMessage, EmailSender, TextMessage, TextSender } from './message';
+import { OrderRepository } from './facade/repository/impl/OrderRepository';
+import { OrderService } from './facade/services/impl/OrderService';
+import { OrderController } from './facade/controllers/OrderController';
 
-import { GameCharacterBuilder, GameCharacter } from './builder';
 
-import { ClassFactory, IClass } from './factory';
+// ADAPTER
+try {
+  throw new ThirdPartyError('Resource not found', 404);
+} catch (error) {
+  const adaptedError = ErrorAdapter.adapt(error);
+  console.error(adaptedError);
+}
 
-const spinner: GameObject = new GameObject('Spinner !', [0, 0]);
-spinner.describe();
+// DECORATOR
+const clientNotification = (notifier: INotifier): void => {
+  console.log(notifier.notify('Hello'));
+  console.log('\n');
+};
 
-const anotherSpinner: GameObject = spinner.clone();
-anotherSpinner.describe();
+const notifier = new Notifier();
+clientNotification(notifier);
 
-const classFactory: ClassFactory = new ClassFactory();
-const wizard: IClass = classFactory.createCharacter('Wizard');
+const emailNotifier = new EmailNotifier(notifier);
+clientNotification(emailNotifier);
 
-const gameCharBuilder: GameCharacterBuilder = new GameCharacterBuilder('Cornel', wizard);
-const gameChar: GameCharacter = gameCharBuilder.build();
-gameChar.describe();
+const slackNotifier = new SlackNotifier(emailNotifier);
+clientNotification(slackNotifier);
 
-gameCharBuilder.setWeapon('Atiesh, Greatstaff of the Guardian');
-gameChar.describe();
 
-gameCharBuilder.setArmor('the Frostfire Regalia');
-gameChar.describe();
-gameChar.attack();
+// BRIDGE
+const smsSender = new TextSender();
+const mailSender = new EmailSender();
 
-const warrior: IClass = classFactory.createCharacter('Warrior');
-gameCharBuilder.setWeapon('Thunderfury, Blessed Blade of the Windseeker\n');
-gameCharBuilder.setClass(warrior);
-gameCharBuilder.setArmor('the Dreadnaught Battlegear');
+const textMessage = new TextMessage('Hello via SMS!', smsSender);
+textMessage.send();
 
-gameChar.describe();
-gameChar.attack();
+const emailMessage = new EmailMessage('Hello via Mail!', mailSender);
+emailMessage.send();
+
+
+// FACADE ( REPOSITORY )
+const orderRepository: OrderRepository = new OrderRepository();
+const orderService: OrderService = new OrderService(orderRepository);
+const orderController: OrderController = new OrderController(orderService);
+
+orderController.save({ name: 'Test', price: 100 });
+console.log(orderController.findAll());
