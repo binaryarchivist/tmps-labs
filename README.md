@@ -1,54 +1,163 @@
-# Topic: *Creational Design Patterns*
+# Topic: *Structural Design Patterns*
 ## Author: *Nastas Corneliu*
 ------
 ## Objectives:
-&ensp; &ensp; __1. Study and understand the Creational Design Patterns.__
+&ensp; &ensp; __1. Study and understand the Structural Design Patterns.__
 
-&ensp; &ensp; __2. Choose a domain, define its main classes/models/entities and choose the appropriate instantiation mechanisms.__
+&ensp; &ensp; __2. As a continuation of the previous laboratory work, think about the functionalities that your system will need to provide to the user.__
 
-&ensp; &ensp; __3. Use some creational design patterns for object instantiation in a sample project.__
+&ensp; &ensp; __3. Implement some additional functionalities, or create a new project using structural design patterns.__
 
-## Some Theory:
-&ensp; &ensp; Creational design patterns are a category of design patterns that focus on the process of object creation. They provide a way to create objects in a flexible and controlled manner, while decoupling the client code from the specifics of object creation. Creational design patterns address common problems encountered in object creation, such as how to create objects with different initialization parameters, how to create objects based on certain conditions, or how to ensure that only a single instance of an object is created. There are several creational design patterns that have their own strengths and weaknesses. Each of it is best suited for solving specific problems related to object creation. By using creational design patterns, developers can improve the flexibility, maintainability, and scalability of their code.
+## Theoretical background:
+&ensp; &ensp; Structural design patterns are a category of design patterns that focus on the composition of classes and objects to form larger structures and systems. They provide a way to organize objects and classes in a way that is both flexible and efficient, while allowing for the reuse and modification of existing code. Structural design patterns address common problems encountered in the composition of classes and objects, such as how to create new objects that inherit functionality from existing objects, how to create objects that share functionality without duplicating code, or how to define relationships between objects in a flexible and extensible way.
 
-&ensp; &ensp; Some examples of this kind of design patterns are:
+&ensp; &ensp; Some examples of from this category of design patterns are:
 
-* Singleton
-* Builder
-* Prototype
-* Factory Method
+* Adapter
+* Bridge
+* Composite
+* Decorator
+* Facade
+* Flyweight
+* Proxy
 
 ## Main tasks:
-&ensp; &ensp; __1. Choose an OO programming language and a suitable IDE or Editor (No frameworks/libs/engines allowed).__
+&ensp; &ensp; __1. By creating a new project, or extending your last one (Lab work Nr2), implement at least 2 structural design patterns in your project:__
+* The implemented design pattern should help to perform the tasks involved in your system.
+* The object creation mechanisms/patterns can now be buried into the functionalities instead of using them into the client.
+* There should only be one client for the whole system.
 
-&ensp; &ensp; __2. Select a domain area for the sample project.__
+&ensp; &ensp; __2. Keep your files grouped (into packages/directories) by their responsibilities (an example project structure):__
+* client
+* domain
+  * factories
+  * builder
+  * models
+* utilities
+* data(if applies)
 
-&ensp; &ensp; __3. Define the main involved classes and think about what instantiation mechanisms are needed.__
+&ensp; &ensp; __3. Document your work in a separate markdown file according to the requirements presented below (the structure can be extended of course):__
+* Topic of the laboratory work
+* Author
+* Introduction/Theory/Motivation
+* Implementation & Explanation (you can include code snippets as well)
+  * Indicate the location of the code snippet
+  * Emphasize the main idea and motivate the usage of the pattern
+* Results/Screenshots/Conclusions
 
-&ensp; &ensp; __4. Based on the previous point, implement at least 2 creational design patterns in your project.__
+## Implementation
 
-## Implementation:
+### Adapter
+The Adapter Design Pattern is a structural design pattern that allows two incompatible interfaces to work together. This pattern involves a single class called Adapter which joins functionalities of independent or incompatible interfaces.
 
-### Singleton 
-* Restricts the instantiation of a class and ensures that only one instance of the class exists. In my case I chose to implement a `Logger` class that logs various information. We define logger as propriety and get its instance if there is any and use it to log information.
+When integrating third-party libraries or external services into your application, it's common to encounter data structures or error formats that don't match the needs of your application.
 
-### Prototype
-* The Prototype Pattern is a creational design pattern that allows an object to copy itself. By returning a new instance with same proprieties we essentially "clone" the current instance.
+In my case:
 
-### Factory
-* The Factory Pattern takes care of object creation and delivers the newly constructed instances ready for use, abstracting the object creation complexities from the consumer.
-  * I've implemented the Factory class following these steps:
-    * Implementing a `IClass` interface which will be the glue between all the classes in Factory.
-    * Implement concrete classes under `IClass` interface: `Warrior` and `Wizard`
-    * Finally define the Factory class that returns a specific class based on type passed to it.
+* ThirdPartyError: Represents errors from external library
+* AppError: Represents the errors format in my application
 
-### Builder
-* The Builder Pattern is a creational design pattern that lets us construct complex objects step by step. It's a great way to avoid constructor "pollution" and re-instantiating everything.
-  * It was implemented by first creating a `GameCharacter` class with different proprieties
-  * We need an interface for the Builder and that's where `ICharacterBuilder` comes into play, basically define methods for assigning character props.
-  * Last but not least part: the `GameCharacterBuilder` which implements the above interface.
+#### Adapter Implementation
+```typescript
+export class ThirdPartyError {
+  public message: string;
+  public code: number;
+  constructor(message, code) {
+    this.message = message;
+    this.code = code;
+  }
+}
+
+export class AppError {
+  public message: string;
+  public errorCode: number;
+  public statusCode: number;
+
+  constructor(message: string, errorCode: number, statusCode: number) {
+    this.message = message;
+    this.errorCode = errorCode;
+    this.statusCode = statusCode;
+  }
+}
+
+export class ErrorAdapter {
+  static adapt(error: ThirdPartyError | AppError): AppError {
+    if (error instanceof ThirdPartyError) {
+      let statusCode;
+
+      switch (error.code) {
+        case 404:
+          statusCode = 404;
+          break;
+        case 500:
+          statusCode = 500;
+          break;
+        default:
+          statusCode = 400;
+      }
+
+      return new AppError(error.message, error.code, statusCode);
+    }
+    return error;
+  }
+}
+```
+
+This way we've adapted the errors to our needs.
+
+### Bridge
+
+The Bridge pattern is a structural design pattern that aims to decouple an abstraction from its implementation, allowing the two to vary independently. This is achieved by splitting the responsibilities into two separate hierarchies - the abstraction and the implementation.
+
+In my case `Message` is the abstraction while `MessageSender` is its implementation.
+
+#### Structure
+1. **Abstraction (`Message`)**: This abstract class defines the abstraction's structure and maintains a reference to an object of type `MessageSender`.
+2. **ConcreteAbstraction (`TextMessage`, `EmailMessage`)**: These classes extend the `Message` abstraction and implement the `send` method.
+3. **Implementor (`MessageSender`)**: This abstract class defines the structure for the concrete implementations.
+4. **ConcreteImplementor (`TextSender`, `EmailSender`)**: These classes extend the `MessageSender` and provide concrete implementations.
+
+#### Benefits
+1. Flexible
+2. Single Responsibility
+3. Separation of concern: Decouples abstract classes from its concrete implementation
+
+### Facade
+
+The Facade pattern is a structural design pattern that provides a simplified interface to a complex subsystem. It doesn't suppress the subsystem; instead, it provides a simplified API over a set of interfaces, making the subsystem easier to use.
+
+In my implementation `OrderRepository` can be seen as a Facade that simplifies the interaction with the database for the purpose of saving and retrieving orders.
+
+#### Structure
+1. **Facade (`OrderRepository`)**: Offers simplified methods to deal with the underlying complex operations of reading and writing orders to a database.
+2. **Sub-system Interfaces (`IRepository`, `IOrderRepository`)**: Set of interfaces defining the operations that the facade uses.
+
+#### Benefits
+1. Simplification
+2. Separation of Concerns, also Dependency Inversion principle can be applied here and Single Responsibility.
+3. Reusability
+
+### Decorator
+
+The Decorator pattern is a structural design pattern that allows you to dynamically add new behaviors or responsibilities to objects without altering their code. This is achieved by creating a set of decorator classes that are used to wrap concrete components.
+
+In my case the `INotifier` interface represents a component that can send notifications.
+
+The `Notifier` class implements this interface and provides basic implementation of `notify` method.
+
+The `NotifierDecorator` and its subclasses: `EmailNotifier` and `SlackNotifier` act as decorators enhancing the `Notifier` class
 
 
-## Conclusion
+#### Structure
+1. **Component (`INotifier`)**: This defines the interface for objects that can have responsibilities added to them dynamically.
+2. **ConcreteComponent (`Notifier`)**: This is the main object to which new responsibilities can be added.
+3. **Decorator (`NotifierDecorator`)**: Maintains a reference to a Component object and defines an interface that conforms to the Component's interface.
+4. **ConcreteDecorator (`SlackNotifier`, `EmailNotifier`)**: These extend the base `NotifierDecorator` to add new functionalities.
 
-During this laboratory work I've had some fun building interesting classes that might be actual real world examples and got to study about these design patterns in great detail.
+
+#### Benefits
+1. Flexible
+2. Extensible
+3. Composition is better than inheritance (in my honest opinion)
+
+
