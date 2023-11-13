@@ -1,4 +1,6 @@
 import { Handler } from './chain-of-responsibility/Handler';
+import { ISubject, Newsletter } from './observer/Subject';
+import { Citizen, IObserver } from './observer/Observer';
 
 // const handler = new Handler();
 //
@@ -36,5 +38,13 @@ import { Handler } from './chain-of-responsibility/Handler';
 //     console.error('Error:', error);
 //   });
 
+const newsletter: Newsletter = new Newsletter();
 
+const student: IObserver = new Citizen("Corneliu", ["university", "salary"]);
+const parent: IObserver = new Citizen("Svetlana", ["health", "studies"]);
+
+newsletter.subscribe(student);
+newsletter.subscribe(parent);
+
+newsletter.release(['university']);
 
