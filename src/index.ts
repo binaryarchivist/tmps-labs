@@ -1,6 +1,7 @@
 import { Handler } from './chain-of-responsibility/Handler';
 import { ISubject, Newsletter } from './observer/Subject';
 import { Citizen, IObserver } from './observer/Observer';
+import { Originator, Pacient } from './memento/Memento';
 
 // const handler = new Handler();
 //
@@ -38,13 +39,33 @@ import { Citizen, IObserver } from './observer/Observer';
 //     console.error('Error:', error);
 //   });
 
-const newsletter: Newsletter = new Newsletter();
+// const newsletter: Newsletter = new Newsletter();
+//
+// const student: IObserver = new Citizen("Corneliu", ["university", "salary"]);
+// const parent: IObserver = new Citizen("Svetlana", ["health", "studies"]);
+//
+// newsletter.subscribe(student);
+// newsletter.subscribe(parent);
+//
+// newsletter.release(['university']);
 
-const student: IObserver = new Citizen("Corneliu", ["university", "salary"]);
-const parent: IObserver = new Citizen("Svetlana", ["health", "studies"]);
+const originator = new Originator('moody.');
+const pacient = new Pacient(originator);
 
-newsletter.subscribe(student);
-newsletter.subscribe(parent);
+pacient.backup();
+originator.update();
 
-newsletter.release(['university']);
+pacient.backup();
+originator.update();
 
+originator.update();
+pacient.backup();
+
+console.log('');
+pacient.showHistory();
+
+console.log('\nClient: Rollback\n');
+pacient.undo();
+
+console.log('\nClient:Rollback!\n');
+pacient.undo();
